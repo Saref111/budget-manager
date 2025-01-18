@@ -1,5 +1,5 @@
 use types::{Budget, BudgetTransaction};
-use ui::run_ui;
+use ui::ui::run_ui;
 
 mod types;
 mod  ui;
