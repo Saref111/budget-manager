@@ -1,7 +1,7 @@
 pub struct Budget {
-    transactions: Vec<Transaction>,
-    total: i32,
-    name: String
+    pub transactions: Vec<Transaction>,
+    pub total: i32,
+    pub name: String
 }
 
 pub struct Transaction {
@@ -13,7 +13,7 @@ pub struct Transaction {
 impl Budget {
     pub fn new(name: Option<String>, transaction: Option<Vec<Transaction>>, total: i32) -> Self {
         Budget {
-            name: name.unwrap_or_default(),
+            name: name.unwrap_or ("Primary budget".to_string()),
             total,
             transactions: transaction.unwrap_or_default()
         }
