@@ -1,6 +1,6 @@
 use std::{io, thread, time::Duration};
 use tui::{
-    backend::CrosstermBackend, layout::{Constraint, Direction, Layout}, style::{Color, Style}, symbols::DOT, text::Spans, widgets::{Block, Borders, List, ListItem, Paragraph, Tabs, Widget}, Terminal
+    backend::CrosstermBackend, layout::{Constraint, Direction, Layout}, style::{Color, Modifier, Style}, symbols::DOT, text::Spans, widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Tabs, Widget}, Terminal
 };
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
@@ -19,6 +19,7 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut active_tab = 0;
+    let mut list_state = ListState::default();
     loop {
         terminal.draw(|f| {
             let chunks = Layout::default()
@@ -46,11 +47,13 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
                 .map(|(i, t)| format!("{}. {}: ${}", i, t.message, t.sum))
                 .map(ListItem::new)
                 .collect();
+            
+            let list = List::new(content)
+                .block(Block::default().title("Transactions").borders(Borders::ALL))
+                .highlight_style(Style::default().add_modifier(Modifier::BOLD))
+                .highlight_symbol(">>");
 
-            // let paragraph = Paragraph::new(content)
-            //     .block(Block::default().title("Content").borders(Borders::ALL));
-            let list = List::new(content).block(Block::default().title("Transactions").borders(Borders::ALL));
-            f.render_widget(list, chunks[1]);
+            f.render_stateful_widget(list, chunks[1], &mut list_state);
         })?;
 
         if event::poll(Duration::from_millis(100))? {
@@ -61,12 +64,33 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
                             active_tab -= 1;
                         }
                     },
-
                     KeyCode::Right => {
                         if active_tab < budgets.len() - 1 {
                             active_tab += 1;
                         }
-                    } 
+                    },
+                    KeyCode::Up => {
+                        if let Some(li) = list_state.selected() {
+                            if li > 0 {
+                                list_state.select(Some(li - 1));
+                            } else {
+                                list_state.select(Some(budgets.get(active_tab).unwrap().transactions.len() - 1));
+                            }
+                        } else {
+                            list_state.select(Some(budgets.get(active_tab).unwrap().transactions.len() - 1));
+                        }
+                    },
+                    KeyCode::Down => {
+                        if let Some(li) = list_state.selected() {
+                            if li < budgets.get(active_tab).unwrap().transactions.len() - 1 {
+                                list_state.select(Some(li + 1));
+                            } else {
+                                list_state.select(Some(0));
+                            }
+                        } else {
+                            list_state.select(Some(0));
+                        }
+                    },
 
                     KeyCode::Esc => break,
                     _ => {}
