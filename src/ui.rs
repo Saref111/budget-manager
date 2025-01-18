@@ -1,6 +1,6 @@
 use std::{io, thread, time::Duration};
 use tui::{
-    backend::CrosstermBackend, layout::{Constraint, Direction, Layout}, style::{Color, Style}, symbols::DOT, text::Spans, widgets::{Block, Borders, Paragraph, Tabs, Widget}, Terminal
+    backend::CrosstermBackend, layout::{Constraint, Direction, Layout}, style::{Color, Style}, symbols::DOT, text::Spans, widgets::{Block, Borders, List, ListItem, Paragraph, Tabs, Widget}, Terminal
 };
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
@@ -36,20 +36,21 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
                 .select(active_tab)
                 ;
 
-            let size = f.size();
             f.render_widget(tabs, chunks[0]);
 
-            let content = match active_tab {
-                0 => "This is the content of Tab 1",
-                1 => "Content for Tab 2 goes here.",
-                2 => "Here is what Tab 3 looks like.",
-                3 => "Welcome to Tab 4!",
-                _ => "Invalid Tab",
-            };
+            let content: Vec<ListItem> = budgets
+                .get(active_tab)
+                .unwrap()
+                .transactions.iter()
+                .enumerate()
+                .map(|(i, t)| format!("{}. {}: ${}", i, t.message, t.sum))
+                .map(ListItem::new)
+                .collect();
 
-            let paragraph = Paragraph::new(content)
-                .block(Block::default().title("Content").borders(Borders::ALL));
-            f.render_widget(paragraph, chunks[1]);
+            // let paragraph = Paragraph::new(content)
+            //     .block(Block::default().title("Content").borders(Borders::ALL));
+            let list = List::new(content).block(Block::default().title("Transactions").borders(Borders::ALL));
+            f.render_widget(list, chunks[1]);
         })?;
 
         if event::poll(Duration::from_millis(100))? {
