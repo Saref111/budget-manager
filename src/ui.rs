@@ -56,46 +56,8 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
             f.render_stateful_widget(list, chunks[1], &mut list_state);
         })?;
 
-        if event::poll(Duration::from_millis(100))? {
-            if let Event::Key(key) = event::read()? {
-                match key.code {
-                    KeyCode::Left => {
-                        if active_tab >= 1 {
-                            active_tab -= 1;
-                        }
-                    },
-                    KeyCode::Right => {
-                        if active_tab < budgets.len() - 1 {
-                            active_tab += 1;
-                        }
-                    },
-                    KeyCode::Up => {
-                        if let Some(li) = list_state.selected() {
-                            if li > 0 {
-                                list_state.select(Some(li - 1));
-                            } else {
-                                list_state.select(Some(budgets.get(active_tab).unwrap().transactions.len() - 1));
-                            }
-                        } else {
-                            list_state.select(Some(budgets.get(active_tab).unwrap().transactions.len() - 1));
-                        }
-                    },
-                    KeyCode::Down => {
-                        if let Some(li) = list_state.selected() {
-                            if li < budgets.get(active_tab).unwrap().transactions.len() - 1 {
-                                list_state.select(Some(li + 1));
-                            } else {
-                                list_state.select(Some(0));
-                            }
-                        } else {
-                            list_state.select(Some(0));
-                        }
-                    },
-
-                    KeyCode::Esc => break,
-                    _ => {}
-                }
-            }
+        if !(handle_interaction(&mut active_tab, &mut list_state, &budgets).unwrap()) {
+            break;
         }
     }
     // restore terminal
@@ -108,4 +70,51 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
     terminal.show_cursor()?;
 
     Ok(())
+}
+
+
+fn handle_interaction(active_tab: &mut usize, list_state: &mut ListState, budgets: &Vec<Budget>) -> Result<bool, io::Error> {
+    if event::poll(Duration::from_millis(100))? {
+        if let Event::Key(key) = event::read()? {
+            match key.code {
+                KeyCode::Left => {
+                    if *active_tab > 0 {
+                        *active_tab -= 1;
+                    }
+                },
+                KeyCode::Right => {
+                    if *active_tab < budgets.len() - 1 {
+                        *active_tab += 1;
+                    }
+                },
+                KeyCode::Up => {
+                    if let Some(li) = list_state.selected() {
+                        if li > 0 {
+                            list_state.select(Some(li - 1));
+                        } else {
+                            list_state.select(Some(budgets.get(*active_tab).unwrap().transactions.len() - 1));
+                        }
+                    } else {
+                        list_state.select(Some(budgets.get(*active_tab).unwrap().transactions.len() - 1));
+                    }
+                },
+                KeyCode::Down => {
+                    if let Some(li) = list_state.selected() {
+                        if li < budgets.get(*active_tab).unwrap().transactions.len() - 1 {
+                            list_state.select(Some(li + 1));
+                        } else {
+                            list_state.select(Some(0));
+                        }
+                    } else {
+                        list_state.select(Some(0));
+                    }
+                },
+
+                KeyCode::Esc => return  Ok(false),
+                _ => {}
+            }
+        }
+    }
+
+    Ok(true)
 }
