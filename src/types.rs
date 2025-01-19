@@ -1,3 +1,8 @@
+pub struct MinimalBudget {
+    pub total: i32,
+    pub name: String,
+}
+
 pub struct PartialBudget {
     pub total: i32,
     pub name: String,
@@ -9,6 +14,45 @@ pub struct Budget {
     pub total: i32,
     pub name: String,
     pub id: u32
+}
+
+pub trait SavableBudget {
+    fn prepare_for_db(&self) -> MinimalBudget;
+    fn get_without_transactions(&self) -> PartialBudget;
+}
+
+impl SavableBudget for PartialBudget {
+    fn prepare_for_db(&self) -> MinimalBudget {
+        MinimalBudget {
+            total: self.total,
+            name: self.name.to_owned(),
+        }
+    }
+
+    fn get_without_transactions(&self) -> PartialBudget {
+        PartialBudget {
+            id: self.id,
+            total: self.total,
+            name: self.name.to_owned(),
+        }
+    }
+}
+
+impl SavableBudget for Budget {
+    fn prepare_for_db(&self) -> MinimalBudget {
+        MinimalBudget {
+            total: self.total,
+            name: self.name.to_owned(),
+        }
+    }
+
+    fn get_without_transactions(&self) -> PartialBudget {
+        PartialBudget {
+            id: self.id,
+            total: self.total,
+            name: self.name.to_owned(),
+        }
+    }
 }
 
 impl Budget {

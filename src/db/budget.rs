@@ -1,9 +1,10 @@
 use rusqlite::{params, Connection, Result as DBResult};
 
-use crate::types::{Budget, PartialBudget};
+use crate::types::{Budget, PartialBudget, SavableBudget};
 use super::transaction::get_budget_transactions;
 
-pub fn add_budget(conn: &Connection, b: Budget) -> DBResult<()> {
+pub fn add_budget(conn: &Connection, b: Box<dyn SavableBudget>) -> DBResult<()> {
+    let b = b.prepare_for_db();
     conn.execute("
         INSERT INTO budgets (total, name) VALUES (?1, ?2)
     ", params![b.total, b.name])?;
@@ -38,4 +39,22 @@ pub fn get_all_budgets(conn: &Connection) -> DBResult<Vec<Budget>> {
     }).collect();
 
     result
-} 
+}
+
+pub fn remove_budget(conn: &Connection, budget_id: u32) -> DBResult<()> {
+    conn.execute("
+        DELETE FROM budgets WHERE id=?
+    ", params![budget_id])?;
+
+    Ok(())
+}
+
+pub fn update_budget(conn: &Connection, b: Box<dyn SavableBudget>) -> DBResult<()> {
+    let budget = b.get_without_transactions();
+
+    conn.execute("
+        UPDATE budgets SET total=?2, name=?3 WHERE id=?1
+    ", params![budget.id, budget.total, budget.name])?;
+
+    Ok(())
+}

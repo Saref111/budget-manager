@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use db::db::init_db;
+use db::{budget::add_budget, db::init_db};
 use types::{Budget, BudgetTransaction};
 use ui::ui::run_ui;
 
@@ -9,7 +9,9 @@ mod  ui;
 mod db;
 
 fn main() -> Result<(), Box<dyn Error>>{
-    init_db()?;
+    let conn = init_db()?;
+
+    // add_budget(&conn, )
 
     let transactions = vec![
         BudgetTransaction::new(42, "Salary income".to_string(), (123).to_string()),
