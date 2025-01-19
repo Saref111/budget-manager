@@ -88,6 +88,11 @@ pub struct BudgetTransaction {
     pub message: String,
 }
 
+pub struct PartialBudgetTransaction {
+    pub sum: i32,
+    pub message: String,
+}
+
 impl BudgetTransaction {
     pub fn new(sum: i32, message: String, id: String) -> Self {
         Self {
