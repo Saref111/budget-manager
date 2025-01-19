@@ -26,5 +26,6 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     let ui = run_ui(vec![budget, b1, b2]);
 
+    let _ = conn.close();
     Ok(())
 }
