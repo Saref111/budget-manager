@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use db::init_db;
+use db::db::init_db;
 use types::{Budget, BudgetTransaction};
 use ui::ui::run_ui;
 
