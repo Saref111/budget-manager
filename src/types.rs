@@ -1,15 +1,23 @@
+pub struct PartialBudget {
+    pub total: i32,
+    pub name: String,
+    pub id: u32
+}
+
 pub struct Budget {
     pub transactions: Vec<BudgetTransaction>,
     pub total: i32,
-    pub name: String
+    pub name: String,
+    pub id: u32
 }
 
 impl Budget {
-    pub fn new(name: Option<String>, transaction: Option<Vec<BudgetTransaction>>, total: i32) -> Self {
+    pub fn new(name: Option<String>, transaction: Option<Vec<BudgetTransaction>>, total: i32, id: u32) -> Self {
         Budget {
             name: name.unwrap_or ("Primary budget".to_string()),
             total,
-            transactions: transaction.unwrap_or_default()
+            transactions: transaction.unwrap_or_default(),
+            id
         }
     }
 
@@ -24,6 +32,7 @@ impl Default for Budget {
             name: "Default budget".to_string(),
             transactions: vec![],
             total: 0,
+            id: 0
         }
     }
 }
