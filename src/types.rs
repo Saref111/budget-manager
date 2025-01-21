@@ -1,5 +1,6 @@
 use tui::widgets::ListState;
 
+#[derive(PartialEq)]
 pub enum AppMode {
     Read,
     Edit
@@ -29,6 +30,7 @@ impl App {
 pub enum UserActions {
     Exit,
     Continue,
+    Edit,
     AddTransaction(PartialBudgetTransaction, u32),
     UpdateTransaction(BudgetTransaction),
     RemoveTransaction(u32),

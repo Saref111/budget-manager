@@ -8,14 +8,11 @@ use crossterm::event::{
 use tui::widgets::ListState;
 
 use crate::types::{
-    App, 
-    MinimalBudget, 
-    PartialBudgetTransaction, 
-    UserActions
+    App, AppMode, UserActions
 };
 
 
-pub fn handle_interaction(
+pub fn handle(
     app: &mut App
 ) -> Result<UserActions, io::Error> {
     if event::poll(Duration::from_millis(100))? {
@@ -37,16 +34,9 @@ pub fn handle_interaction(
                 KeyCode::Backspace=> {
                     handle_backspace(&mut app.list_state);
                 },
-                KeyCode::Char('b') => {
-                    return Ok(UserActions::AddBudget(handle_b_char()?));
+                KeyCode::Char('e') => {
+                    app.mode = AppMode::Edit
                 },
-                KeyCode::Char('t') => {
-                    if !app.budgets.is_empty() {
-                        return Ok(UserActions::AddTransaction(handle_t_char()?, app.budgets.get(app.active_tab).unwrap().id));
-                    }
-                },
-                KeyCode::Char('r') => {},
-                KeyCode::Char('u') => {},
                 KeyCode::Esc => return  Ok(UserActions::Exit),
                 _ => {}
             }
@@ -96,12 +86,4 @@ fn handle_backspace(list_state: &mut ListState) {
     if let Some(_) = list_state.selected() {
         list_state.select(None);
     }
-}
-
-fn handle_b_char() -> Result<MinimalBudget, io::Error>  {
-    todo!()
-}
-
-fn handle_t_char() -> Result<PartialBudgetTransaction, io::Error>  {
-    todo!()
 }

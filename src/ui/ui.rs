@@ -18,11 +18,14 @@ use crossterm::{
 };
 
 use crate::types::{
-    App,
-    UserActions
+    App, AppMode, UserActions
 };
 
-use super::{handlers::handle_interaction, render::render};
+use super::{
+    handlers::navigation_handlers::handle as handle_nav, 
+    handlers::edit_handlers::handle as handle_edit, 
+    render::render
+};
 
 pub fn run_ui(mut app: App) -> Result<(), io::Error> {
     enable_raw_mode()?;
@@ -36,13 +39,18 @@ pub fn run_ui(mut app: App) -> Result<(), io::Error> {
     loop {
         render(&mut terminal, &mut app)?;
 
-        match handle_interaction(&mut app)? {
-            UserActions::Exit => break,
-            UserActions::Continue => {},
-            UserActions::AddTransaction(transaction, budget_id ) => {},
-            UserActions::RemoveTransaction(id) => {},
-            UserActions::UpdateTransaction(t) => {},
-            UserActions::AddBudget(b) => {},
+        if app.mode == AppMode::Read {
+
+            match handle_nav(&mut app)? {
+                UserActions::Exit => break,
+                UserActions::Continue => {},
+                _ => {}
+            }
+
+        } else {
+            match handle_edit(&mut app)? {
+                _ => {}
+            }
         }
     }
 
