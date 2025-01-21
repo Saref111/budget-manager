@@ -1,41 +1,48 @@
 use std::{io, time::Duration};
 
-use crossterm::{event::{self, EnableMouseCapture, Event, KeyCode}, execute, terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen}};
+use crossterm::event::{
+    self, 
+    Event, 
+    KeyCode
+};
 use tui::widgets::ListState;
 
-use crate::{db::transaction::add_transaction, types::{Budget, MinimalBudget, PartialBudgetTransaction}};
+use crate::types::{
+    App, 
+    MinimalBudget, 
+    PartialBudgetTransaction, 
+    UserActions
+};
 
-use super::{prompts::{prompt_for_new_budget, prompt_for_new_transaction}, ui::UserActions};
 
 pub fn handle_interaction(
-    active_tab: &mut usize, 
-    list_state: &mut ListState, 
-    budgets: &Vec<Budget>
+    app: &mut App
 ) -> Result<UserActions, io::Error> {
     if event::poll(Duration::from_millis(100))? {
-        if let Event::Key(key) = event::read()? {
+        let event = event::read()?;
+        if let Event::Key(key) = event {
             match key.code {
                 KeyCode::Left => {
-                    handle_key_left(active_tab);
+                    handle_key_left(&mut app.active_tab);
                 },
                 KeyCode::Right => {
-                    handle_key_right(active_tab, budgets.len() - 1);
+                    handle_key_right(&mut app.active_tab, app.budgets.len() - 1);
                 },
                 KeyCode::Up => {
-                    handle_key_up(list_state, budgets.get(*active_tab).unwrap().transactions.len() - 1);
+                    handle_key_up(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
                 },
                 KeyCode::Down => {
-                    handle_key_down(list_state, budgets.get(*active_tab).unwrap().transactions.len() - 1);
+                    handle_key_down(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
                 },
                 KeyCode::Backspace=> {
-                    handle_backspace(list_state);
+                    handle_backspace(&mut app.list_state);
                 },
                 KeyCode::Char('b') => {
                     return Ok(UserActions::AddBudget(handle_b_char()?));
                 },
                 KeyCode::Char('t') => {
-                    if !budgets.is_empty() {
-                        return Ok(UserActions::AddTransaction(handle_t_char()?, budgets.get(*active_tab).unwrap().id));
+                    if !app.budgets.is_empty() {
+                        return Ok(UserActions::AddTransaction(handle_t_char()?, app.budgets.get(app.active_tab).unwrap().id));
                     }
                 },
                 KeyCode::Char('r') => {},
@@ -92,21 +99,9 @@ fn handle_backspace(list_state: &mut ListState) {
 }
 
 fn handle_b_char() -> Result<MinimalBudget, io::Error>  {
-    disable_raw_mode()?;
-    let b = prompt_for_new_budget();
-
-    enable_raw_mode()?;
-    execute!(io::stdout(), EnterAlternateScreen, EnableMouseCapture)?;
-
-    Ok(b)
+    todo!()
 }
 
 fn handle_t_char() -> Result<PartialBudgetTransaction, io::Error>  {
-    disable_raw_mode()?;
-    let t = prompt_for_new_transaction();
-
-    enable_raw_mode()?;
-    execute!(io::stdout(), EnterAlternateScreen, EnableMouseCapture)?;
-
-    Ok(t)
+    todo!()
 }

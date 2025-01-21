@@ -19,19 +19,16 @@ use tui::{
         Borders, 
         List, 
         ListItem, 
-        ListState, 
         Tabs
     }, 
     Terminal
 };
 
-use crate::types::Budget;
+use crate::types::App;
 
 pub fn render(
     terminal: &mut Terminal<CrosstermBackend<Stdout>>,
-    budgets: &Vec<Budget>,
-    active_tab: usize,
-    list_state: &mut ListState
+    app: &mut App
 ) -> Result<(), io::Error>  {
     terminal.draw(|f| {
         let chunks = Layout::default()
@@ -40,19 +37,19 @@ pub fn render(
             .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
             .split(f.size());
 
-        let titles = budgets.iter().map(|b| format!("{}: ${}", b.name, b.total)).map(Spans::from).collect();
+        let titles = app.budgets.iter().map(|b| format!("{}: ${}", b.name, b.total)).map(Spans::from).collect();
         let tabs = Tabs::new(titles)
             .block(Block::default().title("Budget manager").borders(Borders::ALL))
             .style(Style::default().fg(Color::White))
             .highlight_style(Style::default().fg(Color::Yellow))
             .divider(DOT)
-            .select(active_tab)
+            .select(app.active_tab)
             ;
 
         f.render_widget(tabs, chunks[0]);
 
-        let content: Vec<ListItem> = budgets
-            .get(active_tab)
+        let content: Vec<ListItem> = app.budgets
+            .get(app.active_tab)
             .unwrap()
             .transactions.iter()
             .enumerate()
@@ -65,7 +62,7 @@ pub fn render(
             .highlight_style(Style::default().add_modifier(Modifier::BOLD))
             .highlight_symbol(">>");
 
-        f.render_stateful_widget(list, chunks[1], list_state);
+        f.render_stateful_widget(list, chunks[1], &mut app.list_state);
     })?;
 
     Ok(())

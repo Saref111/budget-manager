@@ -1,7 +1,6 @@
 use std::io;
 use tui::{
-    backend::CrosstermBackend, 
-    widgets::ListState, 
+    backend::CrosstermBackend,
     Terminal
 };
 use crossterm::{
@@ -18,21 +17,14 @@ use crossterm::{
     },
 };
 
-use crate::{db::{budget, transaction}, types::{Budget, BudgetTransaction, MinimalBudget, PartialBudgetTransaction}};
+use crate::types::{
+    App,
+    UserActions
+};
 
 use super::{handlers::handle_interaction, render::render};
 
-pub enum UserActions {
-    Exit,
-    Continue,
-    AddTransaction(PartialBudgetTransaction, u32),
-    UpdateTransaction(BudgetTransaction),
-    RemoveTransaction(u32),
-    AddBudget(MinimalBudget),
-}
-
-pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
-    // setup terminal
+pub fn run_ui(mut app: App) -> Result<(), io::Error> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
 
@@ -41,13 +33,10 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let mut active_tab = 0;
-    let mut list_state = ListState::default();
-
     loop {
-        render(&mut terminal, &budgets, active_tab, &mut list_state)?;
+        render(&mut terminal, &mut app)?;
 
-        match handle_interaction(&mut active_tab, &mut list_state, &budgets)? {
+        match handle_interaction(&mut app)? {
             UserActions::Exit => break,
             UserActions::Continue => {},
             UserActions::AddTransaction(transaction, budget_id ) => {},
@@ -56,7 +45,7 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
             UserActions::AddBudget(b) => {},
         }
     }
-    // restore terminal
+
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),
@@ -64,6 +53,7 @@ pub fn run_ui(budgets: Vec<Budget>) -> Result<(), io::Error> {
         DisableMouseCapture
     )?;
     terminal.show_cursor()?;
+
 
     Ok(())
 }

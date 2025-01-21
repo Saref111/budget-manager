@@ -1,3 +1,40 @@
+use tui::widgets::ListState;
+
+pub enum AppMode {
+    Read,
+    Edit
+}
+
+pub struct App {
+    pub mode: AppMode,
+    pub input: String,
+    pub entity: (String, i32),
+    pub budgets: Vec<Budget>,
+    pub active_tab: usize,
+    pub list_state: ListState,
+}
+
+impl App {
+    pub fn new(budgets: Vec<Budget>) -> Self {
+        Self { 
+            mode: AppMode::Read, 
+            input: String::new(), 
+            entity: (String::new(), 0), 
+            budgets, 
+            active_tab: 0, 
+            list_state: ListState::default()
+        }
+    }
+}
+pub enum UserActions {
+    Exit,
+    Continue,
+    AddTransaction(PartialBudgetTransaction, u32),
+    UpdateTransaction(BudgetTransaction),
+    RemoveTransaction(u32),
+    AddBudget(MinimalBudget),
+}
+
 pub struct MinimalBudget {
     pub total: i32,
     pub name: String,

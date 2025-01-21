@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use db::{budget::add_budget, db::init_db};
-use types::{Budget, BudgetTransaction};
+use types::{App, Budget, BudgetTransaction};
 use ui::ui::run_ui;
 
 mod types;
@@ -24,7 +24,10 @@ fn main() -> Result<(), Box<dyn Error>>{
     let b1 = Budget::new(Some("Secondary budget".to_string()), Some(transactions), 123, 2);
     let b2 = Budget::new(Some("Third budget".to_string()), None, 123432, 3);
 
-    let ui = run_ui(vec![budget, b1, b2]);
+
+    let app = App::new(vec![budget, b1, b2]);
+
+    let ui = run_ui(app);
 
     let _ = conn.close();
     Ok(())
