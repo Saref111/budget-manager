@@ -12,8 +12,8 @@ use tui::{
         Color, 
         Modifier, 
         Style
-    }, symbols::DOT, text::{Span, Spans}, widgets::{
-        Block, Borders, List, ListItem, Paragraph, Tabs
+    }, symbols::{block, DOT}, text::{Span, Spans}, widgets::{
+        Block, Borders, List, ListItem, Paragraph, Tabs, Widget
     }, Frame, Terminal
 };
 
@@ -23,7 +23,7 @@ pub fn render(
     terminal: &mut Terminal<CrosstermBackend<Stdout>>,
     app: &mut App
 ) -> Result<(), io::Error>  {
-    if app.mode == AppMode::Read {
+    if app.mode == AppMode::Normal {
         terminal.draw(|f| draw_read_mode(f, app))?;
     } else {
         terminal.draw(|f| draw_edit_mode(f, app))?;
@@ -67,5 +67,8 @@ fn draw_read_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
 }
 
 fn draw_edit_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
+    
     f.render_widget(Paragraph::new("Edit"), f.size());
+
+    f.render_widget(Paragraph::new(app.input.as_str()), f.size());
 }

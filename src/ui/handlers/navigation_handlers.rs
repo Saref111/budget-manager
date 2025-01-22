@@ -35,7 +35,7 @@ pub fn handle(
                     handle_backspace(&mut app.list_state);
                 },
                 KeyCode::Char('e') => {
-                    app.mode = AppMode::Edit
+                    app.mode = AppMode::Input
                 },
                 KeyCode::Esc => return  Ok(UserActions::Exit),
                 _ => {}

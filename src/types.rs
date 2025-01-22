@@ -2,14 +2,14 @@ use tui::widgets::ListState;
 
 #[derive(PartialEq)]
 pub enum AppMode {
-    Read,
-    Edit
+    Normal,
+    Input
 }
 
 pub struct App {
     pub mode: AppMode,
     pub input: String,
-    pub entity: (String, i32),
+    pub entity: (String, Option<i32>),
     pub budgets: Vec<Budget>,
     pub active_tab: usize,
     pub list_state: ListState,
@@ -18,15 +18,17 @@ pub struct App {
 impl App {
     pub fn new(budgets: Vec<Budget>) -> Self {
         Self { 
-            mode: AppMode::Read, 
+            mode: AppMode::Normal, 
             input: String::new(), 
-            entity: (String::new(), 0), 
+            entity: (String::new(), None), 
             budgets, 
             active_tab: 0, 
             list_state: ListState::default()
         }
     }
 }
+
+#[derive(Debug)]
 pub enum UserActions {
     Exit,
     Continue,
@@ -37,6 +39,7 @@ pub enum UserActions {
     AddBudget(MinimalBudget),
 }
 
+#[derive(Debug)]
 pub struct MinimalBudget {
     pub total: i32,
     pub name: String,
@@ -120,13 +123,14 @@ impl Default for Budget {
     }
 }
 
-
+#[derive(Debug)]
 pub struct BudgetTransaction {
     pub id: String,
     pub sum: i32,
     pub message: String,
 }
 
+#[derive(Debug)]
 pub struct PartialBudgetTransaction {
     pub sum: i32,
     pub message: String,

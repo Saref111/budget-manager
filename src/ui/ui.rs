@@ -39,7 +39,7 @@ pub fn run_ui(mut app: App) -> Result<(), io::Error> {
     loop {
         render(&mut terminal, &mut app)?;
 
-        if app.mode == AppMode::Read {
+        if app.mode == AppMode::Normal {
 
             match handle_nav(&mut app)? {
                 UserActions::Exit => break,
@@ -49,7 +49,9 @@ pub fn run_ui(mut app: App) -> Result<(), io::Error> {
 
         } else {
             match handle_edit(&mut app)? {
-                _ => {}
+                e => {
+                    
+                }
             }
         }
     }
