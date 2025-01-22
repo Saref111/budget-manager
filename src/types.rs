@@ -32,8 +32,8 @@ impl App {
 pub enum UserActions {
     Exit,
     Continue,
-    IntoInputMode,
-    IntoNormalMode,
+    IntoInputMode, // ???
+    IntoNormalMode, // ???
 
     AddTransaction(PartialBudgetTransaction, u32),
     UpdateTransaction(BudgetTransaction),

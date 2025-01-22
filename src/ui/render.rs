@@ -13,9 +13,11 @@ use tui::{
         Modifier, 
         Style
     }, symbols::{block, DOT}, text::{Span, Spans}, widgets::{
-        Block, Borders, List, ListItem, Paragraph, Tabs, Widget
+        Block, Borders, List, ListItem, Paragraph, Tabs, Widget, Wrap
     }, Frame, Terminal
 };
+
+use unicode_width::UnicodeWidthStr;
 
 use crate::types::{App, AppMode};
 
@@ -67,8 +69,28 @@ fn draw_read_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
 }
 
 fn draw_edit_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .margin(2)
+        .constraints(
+            [
+                Constraint::Min(1),
+            ]
+            .as_ref(),
+        )
+        .split(f.size());
     
-    f.render_widget(Paragraph::new("Edit"), f.size());
+    let title = if app.entity.0.is_empty() { "Enter budget name:" } else { "Enter budget total amount of money:" };
+    let edit_block = Paragraph::new(app.input.as_str())
+        .block(Block::default().title(title).borders(Borders::ALL)
+    ).wrap(Wrap { trim: true });
 
-    f.render_widget(Paragraph::new(app.input.as_str()), f.size());
+    let input_width = app.input.width() as u16;
+    let lines_of_text = input_width / chunks[0].width;
+    let char_offset = input_width % chunks[0].width;
+    let horizontal_position = char_offset + (lines_of_text + lines_of_text) + 3;
+    let vertical_position = lines_of_text + 3;
+
+    f.set_cursor( horizontal_position, vertical_position);
+    f.render_widget(edit_block, chunks[0]);
 }
