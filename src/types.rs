@@ -32,11 +32,16 @@ impl App {
 pub enum UserActions {
     Exit,
     Continue,
-    Edit,
+    IntoInputMode,
+    IntoNormalMode,
+
     AddTransaction(PartialBudgetTransaction, u32),
     UpdateTransaction(BudgetTransaction),
     RemoveTransaction(u32),
+
     AddBudget(MinimalBudget),
+    UpdateBudget(PartialBudget),
+    RemoveBudget(u32),
 }
 
 #[derive(Debug)]
@@ -45,6 +50,7 @@ pub struct MinimalBudget {
     pub name: String,
 }
 
+#[derive(Debug)]
 pub struct PartialBudget {
     pub total: i32,
     pub name: String,

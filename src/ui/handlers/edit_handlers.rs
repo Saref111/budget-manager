@@ -30,9 +30,9 @@ pub fn handle(
                     if !app.entity.0.is_empty() && app.entity.1.is_some() {
                         app.mode = AppMode::Normal;
                         return Ok(UserActions::AddBudget(MinimalBudget {
-                            total: app.entity.1.unwrap(),
-                            name: app.entity.0.to_owned()
-                        }));
+                                total: app.entity.1.unwrap(),
+                                name: app.entity.0.to_owned()
+                            }));
                     }
 
                 }
