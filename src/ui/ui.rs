@@ -3,6 +3,8 @@ use tui::{
     backend::CrosstermBackend,
     Terminal
 };
+
+use std::error::Error;
 use crossterm::{
     event::{
         DisableMouseCapture, 
@@ -27,7 +29,7 @@ use super::{
     render::render
 };
 
-pub fn run(mut app: App) -> Result<(), io::Error> {
+pub fn run(mut app: App) -> Result<(), Box<dyn Error>> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
 
@@ -49,9 +51,10 @@ pub fn run(mut app: App) -> Result<(), io::Error> {
 
         } else {
             match handle_edit(&mut app)? {
-                e => {
-                    
-                }
+                UserActions::AddBudget(b) => {
+                    app.add_new_budget(b)?;
+                },
+                _ => {}
             }
         }
     }

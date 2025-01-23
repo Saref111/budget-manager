@@ -21,7 +21,7 @@ pub fn get_all_budgets(conn: &Connection) -> DBResult<Vec<Budget>> {
         Ok(PartialBudget {
             id: row.get(0)?,
             total: row.get(1)?,
-            name: row.get(3)?,
+            name: row.get(2)?,
         } )
     })?;
 

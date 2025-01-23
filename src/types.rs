@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Result as DBResult};
 use tui::widgets::ListState;
 
-use crate::db::budget::get_all_budgets;
+use crate::db::budget::{add_budget, get_all_budgets};
 
 #[derive(PartialEq)]
 pub enum AppMode {
@@ -43,10 +43,16 @@ impl App {
     pub fn update_if_need(&mut self) -> DBResult<()> {
         if self.need_update {
             self.update()?;
+            self.need_update = false;
         }
 
         Ok(())
     }
+
+    pub fn add_new_budget(&mut self, b: MinimalBudget) -> DBResult<()> {
+        add_budget(&self.conn, Box::new(b))?;
+        Ok(())
+    } 
 }
 
 #[derive(Debug)]
@@ -88,6 +94,23 @@ pub struct Budget {
 pub trait SavableBudget {
     fn prepare_for_db(&self) -> MinimalBudget;
     fn get_without_transactions(&self) -> PartialBudget;
+}
+
+impl SavableBudget for MinimalBudget {
+    fn prepare_for_db(&self) -> MinimalBudget {
+        MinimalBudget {
+            total: self.total,
+            name: self.name.to_owned(),
+        }
+    }
+
+    fn get_without_transactions(&self) -> PartialBudget {
+        PartialBudget {
+            id: 0,
+            total: self.total,
+            name: self.name.to_owned(),
+        }
+    }
 }
 
 impl SavableBudget for PartialBudget {
