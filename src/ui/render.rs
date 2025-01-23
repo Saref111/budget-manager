@@ -51,21 +51,26 @@ fn draw_read_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
 
         f.render_widget(tabs, chunks[0]);
 
-        let content: Vec<ListItem> = app.budgets
-            .get(app.active_tab)
-            .unwrap()
-            .transactions.iter()
-            .enumerate()
-            .map(|(i, t)| format!("{}. {}: ${}", i + 1, t.message, t.sum))
-            .map(ListItem::new)
-            .collect();
-        
-        let list = List::new(content)
-            .block(Block::default().title("Transactions").borders(Borders::ALL))
-            .highlight_style(Style::default().add_modifier(Modifier::BOLD))
-            .highlight_symbol(">>");
+        if app.budgets.len() > 0 {
+            let content: Vec<ListItem> = app.budgets
+                .get(app.active_tab)
+                .unwrap()
+                .transactions.iter()
+                .enumerate()
+                .map(|(i, t)| format!("{}. {}: ${}", i + 1, t.message, t.sum))
+                .map(ListItem::new)
+                .collect();
+            
+            let list = List::new(content)
+                .block(Block::default().title("Transactions").borders(Borders::ALL))
+                .highlight_style(Style::default().add_modifier(Modifier::BOLD))
+                .highlight_symbol(">>");
 
-        f.render_stateful_widget(list, chunks[1], &mut app.list_state);
+            f.render_stateful_widget(list, chunks[1], &mut app.list_state);
+        } else {
+            f.render_widget(Paragraph::new("You have no budgets. Press E to add one"), chunks[1]);
+        }
+
 }
 
 fn draw_edit_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {

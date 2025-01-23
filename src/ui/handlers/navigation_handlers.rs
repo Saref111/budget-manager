@@ -20,16 +20,24 @@ pub fn handle(
         if let Event::Key(key) = event {
             match key.code {
                 KeyCode::Left => {
-                    handle_key_left(&mut app.active_tab);
+                    if app.budgets.len() > 0 {
+                        handle_key_left(&mut app.active_tab);
+                    }
                 },
                 KeyCode::Right => {
-                    handle_key_right(&mut app.active_tab, app.budgets.len() - 1);
+                    if app.budgets.len() > 0 {
+                        handle_key_right(&mut app.active_tab, app.budgets.len() - 1);
+                    }
                 },
                 KeyCode::Up => {
-                    handle_key_up(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
+                    if app.budgets.len() > 0 {
+                        handle_key_up(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
+                    }
                 },
                 KeyCode::Down => {
-                    handle_key_down(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
+                    if app.budgets.len() > 0 {
+                        handle_key_down(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
+                    }
                 },
                 KeyCode::Backspace=> {
                     handle_backspace(&mut app.list_state);

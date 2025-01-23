@@ -27,7 +27,7 @@ use super::{
     render::render
 };
 
-pub fn run_ui(mut app: App) -> Result<(), io::Error> {
+pub fn run(mut app: App) -> Result<(), io::Error> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
 

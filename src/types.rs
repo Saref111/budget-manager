@@ -1,4 +1,7 @@
+use rusqlite::{Connection, Result as DBResult};
 use tui::widgets::ListState;
+
+use crate::db::budget::get_all_budgets;
 
 #[derive(PartialEq)]
 pub enum AppMode {
@@ -13,18 +16,36 @@ pub struct App {
     pub budgets: Vec<Budget>,
     pub active_tab: usize,
     pub list_state: ListState,
+    pub conn: Connection,
+    pub need_update: bool,
 }
 
 impl App {
-    pub fn new(budgets: Vec<Budget>) -> Self {
+    pub fn new(conn: Connection) -> Self {
         Self { 
             mode: AppMode::Normal, 
             input: String::new(), 
             entity: (String::new(), None), 
-            budgets, 
+            budgets: vec![],
             active_tab: 0, 
-            list_state: ListState::default()
+            list_state: ListState::default(), 
+            conn,
+            need_update: true
         }
+    }
+
+    pub fn update(&mut self) -> DBResult<()> {
+        self.budgets = get_all_budgets(&self.conn)?;
+
+        Ok(())
+    }
+
+    pub fn update_if_need(&mut self) -> DBResult<()> {
+        if self.need_update {
+            self.update()?;
+        }
+
+        Ok(())
     }
 }
 
