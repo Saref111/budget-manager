@@ -46,6 +46,9 @@ pub fn run(mut app: App) -> Result<(), Box<dyn Error>> {
             match handle_nav(&mut app)? {
                 UserActions::Exit => break,
                 UserActions::Continue => {},
+                UserActions::RemoveBudget(id) => {
+                    app.remove_budget(id)?;
+                }
                 _ => {}
             }
 

@@ -45,6 +45,13 @@ pub fn handle(
                 KeyCode::Char('e') => {
                     app.mode = AppMode::Input
                 },
+                KeyCode::Char('d') => {
+                    if app.budgets.is_empty() {
+                        return  Ok(UserActions::Continue);
+                    }
+
+                    return Ok(UserActions::RemoveBudget(app.budgets.get(app.active_tab).unwrap().id));
+                }
                 KeyCode::Esc => return  Ok(UserActions::Exit),
                 _ => {}
             }

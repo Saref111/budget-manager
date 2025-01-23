@@ -29,10 +29,15 @@ pub fn handle(
                     
                     if !app.entity.0.is_empty() && app.entity.1.is_some() {
                         app.mode = AppMode::Normal;
-                        return Ok(UserActions::AddBudget(MinimalBudget {
-                                total: app.entity.1.unwrap(),
-                                name: app.entity.0.to_owned()
-                            }));
+
+                        let new_budget_action = UserActions::AddBudget(MinimalBudget {
+                            total: app.entity.1.unwrap(),
+                            name: app.entity.0.to_owned()
+                        });
+
+                        app.entity.0 = String::new();
+                        app.entity.1 = None;
+                        return Ok(new_budget_action);
                     }
 
                 }
