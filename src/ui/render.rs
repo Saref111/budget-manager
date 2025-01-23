@@ -85,12 +85,21 @@ fn draw_edit_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
         .block(Block::default().title(title).borders(Borders::ALL)
     ).wrap(Wrap { trim: true });
 
-    let input_width = app.input.width() as u16;
-    let lines_of_text = input_width / chunks[0].width;
-    let char_offset = input_width % chunks[0].width;
-    let horizontal_position = char_offset + (lines_of_text + lines_of_text) + 3;
-    let vertical_position = lines_of_text + 3;
+    let ( 
+        horizontal_position, 
+        vertical_position
+    ) = get_cursor_coords(app.input.width() as u16, chunks[0].width);
 
     f.set_cursor( horizontal_position, vertical_position);
     f.render_widget(edit_block, chunks[0]);
+}
+
+fn get_cursor_coords(i_width: u16, c_width: u16) -> (u16, u16) {
+    let input_width = i_width;
+    let lines_of_text = input_width / c_width;
+    let char_offset = input_width % c_width;
+    let horizontal_position = char_offset + (lines_of_text + lines_of_text) + 3;
+    let vertical_position = lines_of_text + 3;
+
+    (horizontal_position, vertical_position)
 }
