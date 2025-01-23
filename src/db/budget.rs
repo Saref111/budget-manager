@@ -51,7 +51,6 @@ pub fn remove_budget(conn: &Connection, budget_id: u32) -> DBResult<()> {
 
 pub fn update_budget(conn: &Connection, b: Box<dyn SavableBudget>) -> DBResult<()> {
     let budget = b.get_without_transactions();
-
     conn.execute("
         UPDATE budgets SET total=?2, name=?3 WHERE id=?1
     ", params![budget.id, budget.total, budget.name])?;

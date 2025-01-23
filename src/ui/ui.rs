@@ -57,6 +57,9 @@ pub fn run(mut app: App) -> Result<(), Box<dyn Error>> {
                 UserActions::AddBudget(b) => {
                     app.add_new_budget(b)?;
                 },
+                UserActions::UpdateBudget(b) => {
+                    app.update_budget(b)?;
+                },
                 _ => {}
             }
         }

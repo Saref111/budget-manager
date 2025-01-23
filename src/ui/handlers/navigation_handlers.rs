@@ -8,7 +8,7 @@ use crossterm::event::{
 use tui::widgets::ListState;
 
 use crate::types::{
-    App, AppMode, UserActions
+    App, AppMode, UserActions, SavableBudget
 };
 
 
@@ -42,8 +42,8 @@ pub fn handle(
                 KeyCode::Backspace=> {
                     handle_backspace(&mut app.list_state);
                 },
-                KeyCode::Char('e') => {
-                    app.mode = AppMode::Input
+                KeyCode::Char('c') => {
+                    app.mode = AppMode::InputNewBudget
                 },
                 KeyCode::Char('d') => {
                     if app.budgets.is_empty() {
@@ -51,7 +51,17 @@ pub fn handle(
                     }
 
                     return Ok(UserActions::RemoveBudget(app.budgets.get(app.active_tab).unwrap().id));
-                }
+                },
+                KeyCode::Char('u') => {
+                    if app.budgets.is_empty() {
+                        return Ok(UserActions::Continue);
+                    }
+
+                    let current_budget = app.budgets.get(app.active_tab).unwrap();
+                    app.mode = AppMode::UpdateBudget(current_budget.id);
+
+                    return Ok(UserActions::UpdateBudget(current_budget.get_without_transactions()));
+                },
                 KeyCode::Esc => return  Ok(UserActions::Exit),
                 _ => {}
             }
