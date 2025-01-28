@@ -54,6 +54,9 @@ pub fn run(mut app: App) -> Result<(), Box<dyn Error>> {
 
         } else {
             match handle_edit(&mut app)? {
+                UserActions::AddTransaction(t, id) => {
+                    app.add_new_transaction(t, id)?;
+                },
                 UserActions::AddBudget(b) => {
                     app.add_new_budget(b)?;
                 },

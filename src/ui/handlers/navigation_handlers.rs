@@ -8,7 +8,7 @@ use crossterm::event::{
 use tui::widgets::ListState;
 
 use crate::types::{
-    App, AppMode, UserActions, SavableBudget
+    App, AppMode, Budget, SavableBudget, UserActions
 };
 
 
@@ -31,12 +31,16 @@ pub fn handle(
                 },
                 KeyCode::Up => {
                     if app.budgets.len() > 0 {
-                        handle_key_up(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
+                        let current_budget = get_current_budget(&app);
+                        let last_transaction_index = current_budget.transactions.len() - 1;
+                        handle_key_up(&mut app.list_state, last_transaction_index);
                     }
                 },
                 KeyCode::Down => {
                     if app.budgets.len() > 0 {
-                        handle_key_down(&mut app.list_state, app.budgets.get(app.active_tab).unwrap().transactions.len() - 1);
+                        let current_budget = get_current_budget(&app);
+                        let last_transaction_index = current_budget.transactions.len() - 1;
+                        handle_key_down(&mut app.list_state, last_transaction_index);
                     }
                 },
                 KeyCode::Backspace=> {
@@ -45,12 +49,19 @@ pub fn handle(
                 KeyCode::Char('c') => {
                     app.mode = AppMode::InputNewBudget
                 },
+                KeyCode::Char('a') => {
+                    if app.budgets.is_empty() {
+                        return  Ok(UserActions::Continue);
+                    }
+
+                    app.mode = AppMode::InputNewTransaction(get_current_budget(&app).id);
+                },
                 KeyCode::Char('d') => {
                     if app.budgets.is_empty() {
                         return  Ok(UserActions::Continue);
                     }
 
-                    return Ok(UserActions::RemoveBudget(app.budgets.get(app.active_tab).unwrap().id));
+                    return Ok(UserActions::RemoveBudget(get_current_budget(&app).id));
                 },
                 KeyCode::Char('u') => {
                     if app.budgets.is_empty() {
@@ -111,4 +122,8 @@ fn handle_backspace(list_state: &mut ListState) {
     if let Some(_) = list_state.selected() {
         list_state.select(None);
     }
+}
+
+fn get_current_budget(app: &App) -> &Budget {
+    app.budgets.get(app.active_tab).unwrap()
 }

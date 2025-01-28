@@ -1,13 +1,15 @@
 use rusqlite::{Connection, Result as DBResult};
 use tui::widgets::ListState;
 
-use crate::db::budget::{add_budget, get_all_budgets, remove_budget, update_budget};
+use crate::db::{budget::{add_budget, get_all_budgets, remove_budget, update_budget}, transaction::add_transaction};
 
 #[derive(PartialEq)]
 pub enum AppMode {
     Normal,
     InputNewBudget,
-    UpdateBudget(u32)
+    UpdateBudget(u32),
+
+    InputNewTransaction(u32),
 }
 
 pub struct App {
@@ -52,6 +54,11 @@ impl App {
 
     pub fn update_budget(&mut self, b: PartialBudget) -> DBResult<()> {
         update_budget(&self.conn, Box::new(b))?;
+        self.update()
+    }
+
+    pub fn add_new_transaction(&mut self, t: PartialBudgetTransaction, id: u32) -> DBResult<()> {
+        add_transaction(&mut self.conn, t, id)?;
         self.update()
     }
 }

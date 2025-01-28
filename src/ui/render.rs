@@ -38,7 +38,7 @@ fn draw_read_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
     let chunks = Layout::default()
             .direction(Direction::Vertical)
             .margin(1)
-            .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+            .constraints([Constraint::Length(3), Constraint::Min(0), Constraint::Length(7)].as_ref())
             .split(f.size());
 
         let titles = app.budgets.iter().map(|b| format!("{}: ${}", b.name, b.total)).map(Spans::from).collect();
@@ -70,6 +70,12 @@ fn draw_read_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
         } else {
             f.render_widget(Paragraph::new("You have no budgets. Press E to add one"), chunks[1]);
         }
+
+        f.render_widget(Paragraph::new("
+    c - create new budget      | a - add new transaction in current budget
+    u - update current budget  | 
+    d - delete current budget  |
+        ").block(Block::default().borders(Borders::ALL).title("Help")), chunks[2]);
 
 }
 
