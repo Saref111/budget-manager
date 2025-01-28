@@ -32,6 +32,11 @@ pub fn handle(
                 KeyCode::Up => {
                     if app.budgets.len() > 0 {
                         let current_budget = get_current_budget(&app);
+
+                        if current_budget.transactions.len() == 0 {
+                            return Ok(UserActions::Continue);
+                        }
+
                         let last_transaction_index = current_budget.transactions.len() - 1;
                         handle_key_up(&mut app.list_state, last_transaction_index);
                     }
@@ -39,6 +44,11 @@ pub fn handle(
                 KeyCode::Down => {
                     if app.budgets.len() > 0 {
                         let current_budget = get_current_budget(&app);
+
+                        if current_budget.transactions.len() == 0 {
+                            return Ok(UserActions::Continue);
+                        }
+
                         let last_transaction_index = current_budget.transactions.len() - 1;
                         handle_key_down(&mut app.list_state, last_transaction_index);
                     }

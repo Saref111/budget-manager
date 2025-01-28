@@ -8,11 +8,14 @@ pub fn get_budget_transactions(conn: &Connection, budget_id: u32) -> DBResult<Ve
     ")?;
 
     let raw_transactions = stmt.query_map(params![budget_id], |row| {
+        let id: u32 = row.get(0)?;
+        let sum: i32 = row.get(2)?;
+        let message: String = row.get(3)?;
         Ok(
             BudgetTransaction {
-                id: row.get(0)?,
-                sum: row.get(2)?,
-                message: row.get(3)?,
+                id: id.to_string(),
+                sum,
+                message
             }
         )
     })?;

@@ -2,7 +2,7 @@ use std::{io, time::Duration};
 
 use crossterm::event::{self, Event, KeyCode};
 
-use crate::types::{App, AppMode, MinimalBudget, PartialBudget, SavableBudget, UserActions};
+use crate::types::{App, AppMode, MinimalBudget, PartialBudget, PartialBudgetTransaction, SavableBudget, UserActions};
 
 pub fn handle(
     app: &mut App
@@ -28,8 +28,11 @@ pub fn handle(
                     }
                     
                     if !app.entity.0.is_empty() && app.entity.1.is_some() {
-                        let new_budget_action = match app.mode {
-                            
+                        let entity_action = match app.mode {
+                            AppMode::InputNewTransaction(id) => UserActions::AddTransaction(PartialBudgetTransaction {
+                                message: app.entity.0.to_owned(),
+                                sum: app.entity.1.unwrap(),
+                            }, id),
                             AppMode::UpdateBudget(id) => UserActions::UpdateBudget(PartialBudget {
                                 total: app.entity.1.unwrap(),
                                 name: app.entity.0.to_owned(),
@@ -44,7 +47,7 @@ pub fn handle(
                         app.mode = AppMode::Normal;
                         app.entity.0 = String::new();
                         app.entity.1 = None;
-                        return Ok(new_budget_action);
+                        return Ok(entity_action);
                     }
 
                 }

@@ -91,7 +91,10 @@ fn draw_edit_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
         )
         .split(f.size());
     
-    let title = if app.entity.0.is_empty() { "Enter budget name:" } else { "Enter budget total amount of money:" };
+    let title = match app.mode {
+        AppMode::InputNewTransaction(_) => if app.entity.0.is_empty() { "Enter transaction message:" } else { "Enter transaction sum:" }
+        _ => if app.entity.0.is_empty() { "Enter budget name:" } else { "Enter budget total amount of money:" }
+    };
     let edit_block = Paragraph::new(app.input.as_str())
         .block(Block::default().title(title).borders(Borders::ALL)
     ).wrap(Wrap { trim: true });
