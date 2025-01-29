@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Result as DBResult};
 use tui::widgets::ListState;
 
-use crate::db::{budget::{add_budget, get_all_budgets, remove_budget, update_budget}, transaction::add_transaction};
+use crate::db::{budget::{add_budget, get_all_budgets, remove_budget, update_budget}, transaction::{add_transaction, update_transaction}};
 
 #[derive(PartialEq)]
 pub enum AppMode {
@@ -10,6 +10,7 @@ pub enum AppMode {
     UpdateBudget(u32),
 
     InputNewTransaction(u32),
+    UpdateTransaction(u32),
 }
 
 pub struct App {
@@ -59,6 +60,11 @@ impl App {
 
     pub fn add_new_transaction(&mut self, t: PartialBudgetTransaction, id: u32) -> DBResult<()> {
         add_transaction(&mut self.conn, t, id)?;
+        self.update()
+    }
+
+    pub fn update_transaction(&mut self, t: BudgetTransaction) -> DBResult<()> {
+        update_transaction(&self.conn, t)?;
         self.update()
     }
 }
