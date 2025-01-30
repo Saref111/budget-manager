@@ -12,8 +12,10 @@ use tui::{
         Color, 
         Modifier, 
         Style
-    }, symbols::{block, DOT}, text::{Span, Spans}, widgets::{
-        Block, Borders, List, ListItem, Paragraph, Tabs, Widget, Wrap
+    }, symbols::DOT, 
+    text::Spans, 
+    widgets::{
+        Block, Borders, List, ListItem, Paragraph, Tabs, Wrap
     }, Frame, Terminal
 };
 

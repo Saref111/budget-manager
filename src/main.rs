@@ -1,7 +1,7 @@
 use std::error::Error;
 
-use db::{budget::add_budget, db::init_db};
-use types::{App, Budget, BudgetTransaction};
+use db::db::init_db;
+use types::App;
 use ui::ui::run;
 
 mod types;
@@ -13,6 +13,6 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     let mut app = App::new(conn);
     app.update()?;
-    let ui = run(app);
+    let _ = run(app);
     Ok(())
 }

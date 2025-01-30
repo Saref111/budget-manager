@@ -2,7 +2,15 @@ use std::{io, time::Duration};
 
 use crossterm::event::{self, Event, KeyCode};
 
-use crate::types::{App, AppMode, BudgetTransaction, MinimalBudget, PartialBudget, PartialBudgetTransaction, SavableBudget, UserActions};
+use crate::types::{
+    App, 
+    AppMode, 
+    BudgetTransaction, 
+    MinimalBudget, 
+    PartialBudget, 
+    PartialBudgetTransaction,
+    UserActions
+};
 
 pub fn handle(
     app: &mut App
