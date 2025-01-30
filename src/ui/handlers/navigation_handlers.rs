@@ -7,9 +7,9 @@ use crossterm::event::{
 };
 use tui::widgets::ListState;
 
-use crate::{db::budget, types::{
+use crate::types::{
     App, AppMode, Budget, BudgetTransaction, SavableBudget, UserActions
-}};
+};
 
 
 pub fn handle(
@@ -105,6 +105,25 @@ pub fn handle(
 
                     return Ok(UserActions::UpdateBudget(current_budget.get_without_transactions()));
                 },
+                KeyCode::Char('r') => {
+                    if app.budgets.is_empty() {
+                        return Ok(UserActions::Continue);
+                    }
+
+                    let current_budget = app.budgets.get(app.active_tab).unwrap();
+                    
+                    if current_budget.transactions.is_empty() || app.list_state.selected().is_none() {
+                        return  Ok(UserActions::Continue);
+                    }
+
+
+                    let current_transaction_idx = app.list_state.selected().unwrap();
+                    let current_transaction = current_budget.transactions.get(current_transaction_idx).unwrap();
+                    let current_transaction_id = current_transaction.id.parse::<u32>().unwrap();
+
+                    return Ok(UserActions::RemoveTransaction(current_transaction_id));
+
+                }
                 KeyCode::Esc => return  Ok(UserActions::Exit),
                 _ => {}
             }

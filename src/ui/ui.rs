@@ -48,6 +48,9 @@ pub fn run(mut app: App) -> Result<(), Box<dyn Error>> {
                 UserActions::Continue => {},
                 UserActions::RemoveBudget(id) => {
                     app.remove_budget(id)?;
+                },
+                UserActions::RemoveTransaction(id) => {
+                    app.remove_transaction(id)?;
                 }
                 _ => {}
             }

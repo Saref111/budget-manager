@@ -73,8 +73,9 @@ fn draw_read_mode(f: &mut Frame<CrosstermBackend<Stdout>>, app: &mut App) {
 
         f.render_widget(Paragraph::new("
     c - create new budget      | a - add new transaction in current budget
-    u - update current budget  | 
-    d - delete current budget  |
+    u - update current budget  | e - edit current transaction
+    d - delete current budget  | r - remove current transaction
+    Esc - exit edit mode or exit app
         ").block(Block::default().borders(Borders::ALL).title("Help")), chunks[2]);
 
 }
